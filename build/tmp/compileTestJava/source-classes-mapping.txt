@@ -1,0 +1,2 @@
+hypo/driven/spring/io/dockerize/DockerizeApplicationTests.java
+ hypo.driven.spring.io.dockerize.DockerizeApplicationTests

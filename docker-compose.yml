@@ -1,0 +1,12 @@
+version: '2'
+services:
+  dockerize-spring:
+    build: .
+    container_name: dockerize-spring
+    ports:
+      - 8080:8080
+    networks:
+      - spring-cloud-network
+networks:
+  spring-cloud-network:
+    driver: bridge
