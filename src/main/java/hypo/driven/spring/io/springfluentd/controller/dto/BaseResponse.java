@@ -1,4 +1,4 @@
-package hypo.driven.spring.io.dockerize.controller.dto;
+package hypo.driven.spring.io.springfluentd.controller.dto;
 
 import lombok.Data;
 

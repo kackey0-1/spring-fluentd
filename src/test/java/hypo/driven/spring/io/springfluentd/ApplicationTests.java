@@ -1,10 +1,10 @@
-package hypo.driven.spring.io.dockerize;
+package hypo.driven.spring.io.springfluentd;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DockerizeApplicationTests {
+class ApplicationTests {
 
 	@Test
 	void contextLoads() {
