@@ -6,24 +6,19 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="${CONSOLE_LOG}" />
         </Console>
-        <Kafka name="Kafka" topic="kafka-json-data">
-            <PatternLayout>
-                <MarkerPatternSelector defaultPattern="${JSON_LOG_PATTERN}" alwaysWriteExceptions="false">
-                    <PatternMatch key="AUX_JSON" pattern="${JSON_LOG_PATTERN}"/>
-                </MarkerPatternSelector>
-            </PatternLayout>
-            <Property name="bootstrap.servers">${env:KAFKA_BOOTSTRAP_SERVER:-localhost:9092}</Property>
-            <Property name="timeout.ms">5000</Property>
+        <Kafka name="Kafka" topic="quarkus-logs">
+            <JsonLayout />
+            <Property name="bootstrap.servers">localhost:9092</Property>
+            <Property name="acks">0</Property>
         </Kafka>
-        <Async name="AsyncKafka" bloking="false" shutdownTimeout="25000">
-            <AppenderRef ref="Kafka"/>
-        </Async>
+
     </Appenders>
 
     <Loggers>
         <Root level="info">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="AsyncKafka"/>
+            <AppenderRef ref="Kafka"/>
         </Root>
+        <Logger name="org.apache.kafka" level="INFO"/>
     </Loggers>
 </Configuration>

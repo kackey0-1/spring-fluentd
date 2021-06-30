@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <properties>
     <property name="APP_NAME">spring-fluentd</property>
-    <property name="CONSOLE_LOG">%d{yyyy-MM-dd HH:mm:ss.SSS} [${env.APP_NAME},%X{X-B3-SpanId},%X{instanceId}] [%X{requestId}] [%t] %-5level %40.40logger(39):%L - %m%n</property>
-    <property name="JSON_LOG_PATTERN">{"time": "%d{ISO8601}", "level": "%-5level", "service": "${env.APP_NAME}", "class": "%-40.40logger(39):%L", "message": "%enc{%maxLen{%m}{204800}}{JSON}", "exception": "%enc{%maxLen{%ex}{204800}}{JSON}"%n</property>
+    <property name="CONSOLE_LOG">%d{yyyy-MM-dd HH:mm:ss.SSS} [${APP_NAME},%X{X-B3-SpanId},%X{instanceId}] [%X{requestId}] [%t] %-5level %40.40logger(39):%L - %m%n</property>
+    <property name="JSON_LOG_PATTERN">{"time": "%d{ISO8601}", "level": "%-5level", "service": "${APP_NAME}", "class": "%-40.40logger(39):%L", "message": "%enc{%maxLen{%m}{204800}}{JSON}", "exception": "%enc{%maxLen{%ex}{204800}}{JSON}"}%n</property>
+    <property name="AUX_JSON_LOG_PATTERN">{"time": "%d{ISO8601}", "level": "%-5level", "service": "${APP_NAME}", "class": "%-40.40logger(39):%L", "message": "%enc{%maxLen{%m}{204800}}{JSON}", "exception": "%enc{%maxLen{%ex}{204800}}{JSON}"}%n</property>
 </properties>
