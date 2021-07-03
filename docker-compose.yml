@@ -37,6 +37,9 @@ services:
     volumes:
       - ./config/logstash/config/:/usr/share/logstash/config/
       - ./config/logstash/pipeline/:/usr/share/logstash/pipeline/
+    environment:
+      ELASTICSEARCH_HOST: elasticsearch:9200
+      LOG_INDEX_NAME: logstash-json-logs
     depends_on:
       - elasticsearch
     links:
