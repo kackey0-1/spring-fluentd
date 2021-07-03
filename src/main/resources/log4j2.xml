@@ -6,19 +6,16 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="${CONSOLE_LOG}" />
         </Console>
-        <Kafka name="Kafka" topic="quarkus-logs">
-            <JsonLayout />
-            <Property name="bootstrap.servers">localhost:9092</Property>
-            <Property name="acks">0</Property>
-        </Kafka>
+        <Socket name="Logstash_TCP" host="localhost" port="5044" protocol="TCP">
+            <PatternLayout pattern="${JSON_LOG_PATTERN}"/>
+        </Socket>
 
     </Appenders>
 
     <Loggers>
         <Root level="info">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="Kafka"/>
+            <AppenderRef ref="Logstash_TCP"/>
         </Root>
-        <Logger name="org.apache.kafka" level="INFO"/>
     </Loggers>
 </Configuration>
