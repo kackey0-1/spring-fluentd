@@ -8,6 +8,7 @@ resource "aws_security_group" "es" {
     to_port = 0
     protocol = "-1"
     cidr_blocks = [
+      "0.0.0.0/0",
       aws_vpc.spring-elk.cidr_block
     ]
   }
@@ -22,7 +23,7 @@ resource "aws_elasticsearch_domain" "es" {
   elasticsearch_version = "7.7"
 
   cluster_config {
-    instance_count = 1
+    instance_count = 3
     instance_type = "t3.small.elasticsearch"
     zone_awareness_enabled = true
 

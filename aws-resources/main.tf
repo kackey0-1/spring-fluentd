@@ -5,7 +5,7 @@ variable "region" {
 }
 
 locals {
-  common_prefix = "spring-elk"
+  common_prefix = "edu-spring-elk"
   elk_domain = "${local.common_prefix}-elk-domain"
 }
 
