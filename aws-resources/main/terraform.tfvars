@@ -5,5 +5,5 @@ SUBNET = 33
 INSTANCE_KEY_PATH = "./keypair/nginx-key"
 NGINX_INSTANCE = "t2.micro"
 ES_INSTANCE = "t3.small.elasticsearch"
-ES_VOLUME_GB=30
+ES_VOLUME_GB=10
 ES_ENCRYPTION = false

@@ -98,7 +98,7 @@ EOF
 resource "aws_iam_role_policy" "authenticated" {
   name = "authenticated_policy"
   role = aws_iam_role.authenticated.id
-
+  // TODO action should be minimized
   policy = <<EOF
 {
 "Version": "2012-10-17",
@@ -106,8 +106,7 @@ resource "aws_iam_role_policy" "authenticated" {
   {
   "Effect": "Allow",
   "Action": [
-      "mobileanalytics:PutEvents",
-      "cognito-sync:*"
+      "*"
   ],
   "Resource": [
       "*"
