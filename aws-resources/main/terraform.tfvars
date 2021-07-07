@@ -1,0 +1,9 @@
+AWS_REGION = "ap-northeast-1"
+PREFIX = "EDU-LOGGING"
+ENV = "DEV"
+SUBNET = 33
+INSTANCE_KEY_PATH = "./keypair/nginx-key"
+NGINX_INSTANCE = "t2.micro"
+ES_INSTANCE = "t3.small.elasticsearch"
+ES_VOLUME_GB=30
+ES_ENCRYPTION = false

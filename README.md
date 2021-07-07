@@ -16,24 +16,24 @@ docker-compose up -d
 - ElasticSearch
 - Kibana
 
-## kafka connector
-create our connector
+## 
 ```shell
-$ curl -X POST http://localhost:8083/connectors -H "Content-Type: application/json" -d '{
-     "name":"kafka-json-data-logs-elasticsearch-connector-v2",
-     "config":{
-        "connector.class":"io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
-        "connection.url":"http://elasticsearch:9200",
-        "tasks.max":"1",
-        "topics":"spring-kafka-json-logs",
-        "type.name":"_doc",
-        "name":"quarkus-logs-elasticsearch-connector",
-        "value.converter":"org.apache.kafka.connect.json.JsonConverter",
-        "value.converter.schemas.enable":"false",
-        "key.converter.schemas.enable":"false",
-        "schemas.enable":"false",
-        "schema.ignore":"true",
-        "key.ignore":"true"
-     }
-  }'
+Outputs:
+
+elasticsearch = {
+  "es_arn" = "arn:aws:es:ap-northeast-1:424041797444:domain/edu-logging-elasticsearch"
+  "es_endpoint" = "vpc-edu-logging-elasticsearch-5jn2vhouuci3qqnzpf4w4mwyeq.ap-northeast-1.es.amazonaws.com"
+  "kibana_public_url" = "https://ec2-35-75-195-103.ap-northeast-1.compute.amazonaws.com"
+  "kibana_vpc_url" = "https://vpc-edu-logging-elasticsearch-5jn2vhouuci3qqnzpf4w4mwyeq.ap-northeast-1.es.amazonaws.com/_plugin/kibana/"
+  "user_pool" = "EDU-LOGGING_DEV_USER_POOL"
+}
+nginx = {
+  "private_ip" = "10.0.1.187"
+  "public_ip" = "35.75.195.103"
+  "ssh_cmd" = "ssh -i ./keypair/nginx-key ec2-user@i-088e1433f4fc9bc93"
+}
+tags = tomap({
+  "Environment" = "DEV"
+  "Project" = "EDU-LOGGING"
+})
 ```
