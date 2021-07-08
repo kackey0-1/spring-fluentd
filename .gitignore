@@ -37,3 +37,10 @@ out/
 .vscode/
 
 logs
+
+### terraform ###
+*.hcl
+*.info
+.terraform
+*.tfstate
+*.backup
