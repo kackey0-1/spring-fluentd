@@ -1,5 +1,9 @@
 locals {
-  default_tags = map("Environment", var.ENV, "Project", var.PREFIX)
+  default_tags = map(
+    "Environment", var.ENV,
+    "Project", var.PREFIX,
+    "CreatedBy", "kakimoto"
+  )
 }
 
 module "vpc" {
