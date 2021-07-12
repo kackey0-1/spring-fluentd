@@ -59,7 +59,7 @@ EOF
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}-${var.ENV}-NGINX-INSTANCE-ROLE")
+  map("Name", lower("${var.PREFIX}-${var.ENV}-NGINX-INSTANCE-ROLE"))
   )
 }
 
@@ -90,7 +90,7 @@ resource "aws_instance" "nginx" {
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}-${var.ENV}-NGINX-EC2")
+  map("Name", lower("${var.PREFIX}-${var.ENV}-NGINX-EC2"))
   )
 
   lifecycle { create_before_destroy = true }

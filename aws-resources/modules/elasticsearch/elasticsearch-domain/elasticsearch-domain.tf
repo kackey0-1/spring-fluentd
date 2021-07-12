@@ -129,7 +129,7 @@ resource "aws_elasticsearch_domain" "es" {
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${lower(var.PREFIX)}-${lower(var.ENV)}-elastic-search")
+  map("Name", lower("${lower(var.PREFIX)}-${lower(var.ENV)}-elastic-search"))
   )
 
   depends_on = [aws_iam_service_linked_role.es, aws_iam_role_policy_attachment.cognito_es_attach]

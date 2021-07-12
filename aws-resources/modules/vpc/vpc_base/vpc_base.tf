@@ -19,7 +19,7 @@ resource "aws_vpc" "main" {
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}-${var.ENV}-VPC")
+  map("Name", lower("${var.PREFIX}-${var.ENV}-VPC"))
   )
 }
 
@@ -29,30 +29,31 @@ resource "aws_key_pair" "instance_key" {
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}-${var.ENV}-INSTANCE-KEY")
+  map("Name", lower("${var.PREFIX}-${var.ENV}-INSTANCE-KEY"))
   )
 }
 
-resource "aws_subnet" "nginx_pub_0" {
+resource "aws_subnet" "nginx_public_0" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
   availability_zone       = var.AZ[0]
+  map_public_ip_on_launch = true
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}-${var.ENV}-PUB-0-SN")
+  map("Name", lower("${var.PREFIX}-${var.ENV}-PUBLIC-0-SN"))
   )
 }
 
 
-resource "aws_subnet" "es_int_0" {
+resource "aws_subnet" "es_private_0" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.2.0/24"
   availability_zone       = var.AZ[2]
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}-${var.ENV}-INT-0-SN")
+  map("Name", lower("${var.PREFIX}-${var.ENV}-PRIVATE-0-SN"))
   )
 }
 
@@ -62,11 +63,11 @@ resource "aws_internet_gateway" "igw" {
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}-${var.ENV}-IGW")
+  map("Name", lower("${var.PREFIX}-${var.ENV}-IGW"))
   )
 }
 
-resource "aws_route_table" "pub_rt" {
+resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.main.id
   route {
     cidr_block = "0.0.0.0/0"
@@ -75,28 +76,28 @@ resource "aws_route_table" "pub_rt" {
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}-${var.ENV}-PUB-RT")
+  map("Name", lower("${var.PREFIX}-${var.ENV}-PUBLIC-RT"))
   )
 }
 
-resource "aws_route_table" "int_rt" {
+resource "aws_route_table" "private_rt" {
   vpc_id = aws_vpc.main.id
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}-${var.ENV}-INT-RT")
+  map("Name", lower("${var.PREFIX}-${var.ENV}-INT-RT"))
   )
 }
 
 resource "aws_route_table_association" "nginx_pub_0" {
-  subnet_id      = aws_subnet.nginx_pub_0.id
-  route_table_id = aws_route_table.pub_rt.id
+  subnet_id      = aws_subnet.nginx_public_0.id
+  route_table_id = aws_route_table.public_rt.id
 }
 
 
 resource "aws_route_table_association" "es_int_0" {
-  subnet_id      = aws_subnet.es_int_0.id
-  route_table_id = aws_route_table.int_rt.id
+  subnet_id      = aws_subnet.es_private_0.id
+  route_table_id = aws_route_table.private_rt.id
 }
 
 
@@ -108,17 +109,17 @@ output "vpc_id" {
 
 output "es_subnet" {
   description = "Subnet reserved for elastic search"
-  value       = aws_subnet.es_int_0.id
+  value       = aws_subnet.es_private_0.id
 }
 
 output "nginx_subnet" {
   description = "Subnet reserved for elastic search"
-  value       = aws_subnet.nginx_pub_0.id
+  value       = aws_subnet.nginx_public_0.id
 }
 
 output "route_tables" {
   description = "route tables"
-  value       = [aws_route_table.pub_rt.id, aws_route_table.int_rt.id]
+  value       = [aws_route_table.public_rt.id, aws_route_table.private_rt.id]
 }
 
 output "instance_key" {
@@ -128,7 +129,8 @@ output "instance_key" {
 
 output "subnet_map" {
   description = "subnets created in this vpc"
-  value       = { "nginx" = [aws_subnet.nginx_pub_0.id]
-    "es" = [aws_subnet.es_int_0.id]
+  value       = {
+    "nginx" = [aws_subnet.nginx_public_0.id]
+    "es" = [aws_subnet.es_private_0.id]
   }
 }

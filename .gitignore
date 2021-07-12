@@ -44,3 +44,4 @@ logs
 .terraform
 *.tfstate
 *.backup
+*-test

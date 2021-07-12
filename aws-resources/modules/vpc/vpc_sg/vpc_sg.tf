@@ -17,7 +17,7 @@ resource "aws_security_group" "nginx_sg" {
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}-${var.ENV}-NGINX-SG")
+  map("Name", lower("${var.PREFIX}-${var.ENV}-NGINX-SG"))
   )
 }
 
@@ -34,7 +34,7 @@ resource "aws_security_group" "es_sg" {
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}-${var.ENV}-ES-SG")
+  map("Name", lower("${var.PREFIX}-${var.ENV}-ES-SG"))
   )
 }
 
@@ -86,7 +86,8 @@ resource "aws_security_group_rule" "es_sg_nginx_http_rule" {
 
 output "security_group_map" {
   description = "security groups created in this vpc"
-  value       = { "nginx" = aws_security_group.nginx_sg.id
+  value       = {
+    "nginx" = aws_security_group.nginx_sg.id
     "es"    = aws_security_group.es_sg.id
   }
 }
