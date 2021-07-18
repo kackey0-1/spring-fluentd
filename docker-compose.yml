@@ -1,36 +1,8 @@
 version: '2'
 services:
-#  dockerize-spring:
-#    build: .
-#    container_name: dockerize-spring
-#    ports:
-#      - 8080:8080
-#    networks:
-#      - spring-cloud-network
-  elasticsearch:
-    image: elasticsearch:7.12.1
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    ports:
-      - 9200:9200
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.11.2
-    container_name: kibana
-    ports:
-      - 5601:5601
-    environment:
-      ELASTICSEARCH_URL: http://elasticsearch:9200
-      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
-    depends_on:
-      - elasticsearch
-    links:
-      - elasticsearch
-
   logstash:
-    image: docker.elastic.co/logstash/logstash:6.2.2
+    build:
+      context: config/logstash/
     container_name: logstash
     ports:
       - 5044:5044
@@ -38,9 +10,6 @@ services:
       - ./config/logstash/config/:/usr/share/logstash/config/
       - ./config/logstash/pipeline/:/usr/share/logstash/pipeline/
     environment:
-      ELASTICSEARCH_HOST: elasticsearch:9200
+      ELASTICSEARCH_HOST: https://vpc-edu-logging-elasticsearch-5jn2vhouuci3qqnzpf4w4mwyeq.ap-northeast-1.es.amazonaws.com:443
       LOG_INDEX_NAME: logstash-json-logs
-    depends_on:
-      - elasticsearch
-    links:
-      - elasticsearch
+
