@@ -12,4 +12,9 @@ variable "NGINX_SUBNET_ID" {}
 variable "NGINX_INSTANCE" {}
 variable "NGINX_VOLUME_GB" {}
 variable "NGINX_KEY" {}
+variable "SPRING_SUBNET_ID" {}
+variable "SPRING_SECURITY_GROUP" {}
+variable "SPRING_INSTANCE" {}
+variable "SPRING_VOLUME_GB" {}
+variable "SPRING_KEY" {}
 variable "DEFAULT_TAGS" {}

@@ -49,7 +49,7 @@ resource "aws_subnet" "nginx_public_0" {
 resource "aws_subnet" "es_private_0" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.2.0/24"
-  availability_zone       = var.AZ[2]
+  availability_zone       = var.AZ[0]
 
   tags = merge(
   var.DEFAULT_TAGS,
@@ -83,9 +83,14 @@ resource "aws_route_table" "public_rt" {
 resource "aws_route_table" "private_rt" {
   vpc_id = aws_vpc.main.id
 
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.public_nat_gw_0.id
+  }
+
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", lower("${var.PREFIX}-${var.ENV}-INT-RT"))
+  map("Name", lower("${var.PREFIX}-${var.ENV}-PRIVATE-RT"))
   )
 }
 
@@ -95,9 +100,31 @@ resource "aws_route_table_association" "nginx_pub_0" {
 }
 
 
-resource "aws_route_table_association" "es_int_0" {
+resource "aws_route_table_association" "es_private_0" {
   subnet_id      = aws_subnet.es_private_0.id
   route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_eip" "natgw_eip" {
+  vpc = true
+
+  tags = merge(
+  var.DEFAULT_TAGS,
+  map("Name", lower("${var.PREFIX}-${var.ENV}-NATGW_EIP"))
+  )
+}
+resource "aws_nat_gateway" "public_nat_gw_0" {
+  subnet_id     = aws_subnet.nginx_public_0.id
+  allocation_id = aws_eip.natgw_eip.id
+
+  tags = merge(
+  var.DEFAULT_TAGS,
+  map("Name", lower("${var.PREFIX}-${var.ENV}-PUBLIC-0-NATGW"))
+  )
+
+  # To ensure proper ordering, it is recommended to add an explicit dependency
+  # on the Internet Gateway for the VPC.
+  depends_on = [aws_internet_gateway.igw]
 }
 
 
@@ -132,5 +159,13 @@ output "subnet_map" {
   value       = {
     "nginx" = [aws_subnet.nginx_public_0.id]
     "es" = [aws_subnet.es_private_0.id]
+    "spring" = [aws_subnet.es_private_0.id]
+  }
+}
+
+output "natgw_map" {
+  description = "nat gatway created in this vpc"
+  value = {
+    "public0" = aws_nat_gateway.public_nat_gw_0.id
   }
 }

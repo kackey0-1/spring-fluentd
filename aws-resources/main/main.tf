@@ -33,6 +33,11 @@ module "es" {
   NGINX_VOLUME_GB       = 10
   NGINX_SECURITY_GROUPS = [lookup(module.vpc.security_group_map, "nginx")]
   NGINX_KEY             = module.vpc.instance_key
+  SPRING_INSTANCE       = var.SPRING_INSTANCE
+  SPRING_SUBNET_ID      = element(lookup(module.vpc.subnet_map, "spring"), 0)
+  SPRING_SECURITY_GROUP = [lookup(module.vpc.security_group_map, "spring")]
+  SPRING_VOLUME_GB      = 10
+  SPRING_KEY            = module.vpc.instance_key
   DEFAULT_TAGS          = local.default_tags
 }
 
@@ -50,6 +55,13 @@ output "nginx" {
     "private_ip" = module.es.nginx_instance.private_ip
     "public_ip" = module.es.nginx_public_ip
     "ssh_cmd" = "ssh -i ${var.INSTANCE_KEY_PATH} ec2-user@${module.es.nginx_public_ip}"
+  }
+}
+
+output "spring" {
+  description = "spring instance info"
+  value       =  {
+    "private_ip" = module.es.spring_ip
   }
 }
 

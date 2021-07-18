@@ -105,12 +105,8 @@ resource "aws_iam_role_policy" "authenticated" {
 "Statement": [
   {
   "Effect": "Allow",
-  "Action": [
-      "*"
-  ],
-  "Resource": [
-      "*"
-  ]
+  "Action": ["*"],
+  "Resource": ["*"]
   }
 ]
 }
@@ -150,8 +146,8 @@ EOF
 }
 
 resource "aws_iam_role_policy" "unauthenticated" {
-  name = "authenticated_policy"
-  role = aws_iam_role.authenticated.id
+  name = "unauthenticated_policy"
+  role = aws_iam_role.unauthenticated.id
 
   policy = <<EOF
 {

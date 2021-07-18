@@ -1,12 +1,11 @@
 variable "ENV" {}
 variable "PREFIX" {}
+variable "PEM_KEY" {}
 variable "INSTANCE_TYPE" {}
 variable "INSTANCE_VOLUME" {}
 variable "SUBNET_ID" {}
 variable "SECURITY_GROUPS" {}
 variable "AWS_REGION" {}
-variable "PEM_KEY" {}
-variable "ES_ENDPOINT" {}
 variable "COGNITO_DOMAIN" {}
 variable "DEFAULT_TAGS" {}
 
@@ -28,16 +27,16 @@ data "aws_iam_policy" "ssm_ec2_role" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
 }
 
-data "template_file" "userdata" {
-  template = file("../common/configure_nginx.sh")
-  vars = map(
-  "es_endpoint", var.ES_ENDPOINT,
-  "cognito_domain", var.COGNITO_DOMAIN
-  )
+data "aws_iam_policy" "es_ec2_role" {
+  arn = "arn:aws:iam::aws:policy/service-role/AWSQuickSightElasticsearchPolicy"
 }
 
-resource "aws_iam_role" "nginx_role" {
-  name = "${var.PREFIX}-${var.ENV}-NGINX-INSTANCE-ROLE"
+data "template_file" "userdata" {
+  template = file("../common/configure_spring.sh")
+}
+
+resource "aws_iam_role" "spring_role" {
+  name = "${var.PREFIX}-${var.ENV}-SPRING-INSTANCE-ROLE"
 
   assume_role_policy = <<EOF
 {
@@ -48,7 +47,8 @@ resource "aws_iam_role" "nginx_role" {
       "Principal": {
         "Service": [
           "ssm.amazonaws.com",
-          "ec2.amazonaws.com"
+          "ec2.amazonaws.com",
+          "es.amazonaws.com"
         ]
       },
       "Action": "sts:AssumeRole"
@@ -59,24 +59,29 @@ EOF
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", lower("${var.PREFIX}-${var.ENV}-NGINX-INSTANCE-ROLE"))
+  map("Name", lower("${var.PREFIX}-${var.ENV}-SPRING-INSTANCE-ROLE"))
   )
 }
 
-resource "aws_iam_instance_profile" "nginx_profile" {
-  name = "${var.PREFIX}-${var.ENV}-NGINX-INSTANCE-PROFILES"
-  role = aws_iam_role.nginx_role.name
+resource "aws_iam_instance_profile" "spring_profile" {
+  name = "${var.PREFIX}-${var.ENV}-SPRING-INSTANCE-PROFILE"
+  role = aws_iam_role.spring_role.name
 }
 
 resource "aws_iam_role_policy_attachment" "ssm_ec2_role" {
-  role       = aws_iam_role.nginx_role.name
+  role       = aws_iam_role.spring_role.name
   policy_arn = data.aws_iam_policy.ssm_ec2_role.arn
 }
 
-resource "aws_instance" "nginx" {
+resource "aws_iam_role_policy_attachment" "es_ec2_role" {
+  role       = aws_iam_role.spring_role.name
+  policy_arn = data.aws_iam_policy.es_ec2_role.arn
+}
+
+resource "aws_instance" "spring" {
   ami           = data.aws_ami.amazon_linux.id
-  instance_type = var.INSTANCE_TYPE
-  iam_instance_profile = aws_iam_instance_profile.nginx_profile.id
+  instance_type = "t2.small"
+  iam_instance_profile = aws_iam_instance_profile.spring_profile.id
   key_name = var.PEM_KEY
   vpc_security_group_ids = var.SECURITY_GROUPS
   subnet_id = var.SUBNET_ID
@@ -90,37 +95,25 @@ resource "aws_instance" "nginx" {
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", lower("${var.PREFIX}-${var.ENV}-NGINX-EC2"))
+  map("Name", lower("${var.PREFIX}-${var.ENV}-SPRING-EC2"))
   )
 
   lifecycle { create_before_destroy = true }
 }
 
-resource "aws_eip" "nginx" {
-  vpc = true
-
-  tags = merge(
-  var.DEFAULT_TAGS,
-  map("Name", lower("${var.PREFIX}-${var.ENV}-NGINX-EIP"))
-  )
+output "spring_instance" {
+  description = "spring instance"
+  value       =  aws_instance.spring
 }
 
-resource "aws_eip_association" "ngix_eip" {
-  instance_id   = aws_instance.nginx.id
-  allocation_id = aws_eip.nginx.id
+output "spring_es_role" {
+  description = "spring es role arn"
+  value = aws_iam_role.spring_role.arn
 }
 
-output "nginx_instance" {
-  description = "nginx instance"
-  value       =  aws_instance.nginx
-}
-
-output "nginx_ip" {
-  description = "nginx elastic ip"
-  value       =  aws_eip.nginx
-}
-
-output "nginx_es_role" {
-  description = "nginx es role arn"
-  value = aws_iam_role.nginx_role.arn
+output "spring_ip" {
+  description = "spring ip"
+  value       =  {
+    "Private IP" = aws_instance.spring.private_ip
+  }
 }

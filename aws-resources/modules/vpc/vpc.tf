@@ -45,3 +45,8 @@ output "instance_key" {
   description = "keypair for aws instances"
   value       = module.vpc_base.instance_key
 }
+
+output "natgw_map" {
+  description = "nat gateway created in this vpc"
+  value       = module.vpc_base.natgw_map
+}

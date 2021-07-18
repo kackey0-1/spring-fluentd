@@ -9,7 +9,7 @@ nginx -v
 if [ "$?" -ne "0" ]
 then
     yum update -y
-    yum install nginx -y
+    amazon-linux-extras install nginx1 -y
 fi
 
 echo "${file("../common/nginx.conf")}" > /tmp/nginx.conf
