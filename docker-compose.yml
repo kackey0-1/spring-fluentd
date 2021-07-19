@@ -8,7 +8,7 @@ services:
 #    networks:
 #      - spring-cloud-network
   elasticsearch:
-    image: elasticsearch:7.12.1
+    image: elasticsearch:7.7.0
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
@@ -17,7 +17,7 @@ services:
       - 9200:9200
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.11.2
+    image: docker.elastic.co/kibana/kibana:7.7.0
     container_name: kibana
     ports:
       - 5601:5601
@@ -30,7 +30,8 @@ services:
       - elasticsearch
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:6.2.2
+    build:
+      context: ./config/logstash
     container_name: logstash
     ports:
       - 5044:5044

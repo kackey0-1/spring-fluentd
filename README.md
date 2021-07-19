@@ -1,4 +1,4 @@
-# spring-dockerize
+# spring-logstash
 
 ## build
 ```shell

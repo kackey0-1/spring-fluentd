@@ -30,7 +30,7 @@ resource "aws_cognito_user_pool" "user_pool" {
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}_${var.ENV}_USER_POOL")
+  map("Name", lower("${var.PREFIX}_${var.ENV}_USER_POOL"))
   )
 }
 
@@ -57,7 +57,7 @@ resource "aws_cognito_identity_pool" "identity_pool" {
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}_${var.ENV}_IDENTITY_POOL")
+  map("Name", lower("${var.PREFIX}_${var.ENV}_IDENTITY_POOL"))
   )
 
   lifecycle {ignore_changes = [cognito_identity_providers]}
@@ -91,7 +91,7 @@ EOF
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}-${var.ENV}-COGNITO-AUTH-ROLE")
+  map("Name", lower("${var.PREFIX}-${var.ENV}-COGNITO-AUTH-ROLE"))
   )
 }
 
@@ -105,12 +105,8 @@ resource "aws_iam_role_policy" "authenticated" {
 "Statement": [
   {
   "Effect": "Allow",
-  "Action": [
-      "*"
-  ],
-  "Resource": [
-      "*"
-  ]
+  "Action": ["*"],
+  "Resource": ["*"]
   }
 ]
 }
@@ -145,13 +141,13 @@ EOF
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${var.PREFIX}-${var.ENV}-COGNITO-UNAUTH-ROLE")
+  map("Name", lower("${var.PREFIX}-${var.ENV}-COGNITO-UNAUTH-ROLE"))
   )
 }
 
 resource "aws_iam_role_policy" "unauthenticated" {
-  name = "authenticated_policy"
-  role = aws_iam_role.authenticated.id
+  name = "unauthenticated_policy"
+  role = aws_iam_role.unauthenticated.id
 
   policy = <<EOF
 {
@@ -180,6 +176,17 @@ resource "aws_cognito_identity_pool_roles_attachment" "identity_pool" {
   }
 }
 
+//resource "null_resource" "cognito_user" {
+//
+//  triggers = {
+//    user_pool_id = aws_cognito_user_pool.user_pool.id
+//  }
+//
+//  provisioner "local-exec" {
+//    command = "aws cognito-idp admin-create-user --user-pool-id ${aws_cognito_user_pool.user_pool.id} --username admin-user --temporary-password kQuB@*RETB$o --user-attributes Name=email,Value=kentaro.a.kakimoto@gmail.com"
+//  }
+//}
+
 output "cognito_map" {
   description = "congnito info"
   value = {
@@ -189,3 +196,4 @@ output "cognito_map" {
     "domain"           = "${aws_cognito_user_pool_domain.user_pool_domain.domain}.auth.${var.AWS_REGION}.amazoncognito.com"
   }
 }
+

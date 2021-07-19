@@ -4,6 +4,7 @@ variable "SUBNET_IDS" {}
 variable "SECURITY_GROUPS" {}
 variable "AWS_REGION" {}
 variable "COGNITO_MAP" {}
+variable "ES_ROLES" {}
 variable "ES_INSTANCE" {}
 variable "ES_VOLUME_GB" {}
 variable "ES_ENCRYPTION" {}
@@ -53,7 +54,7 @@ data "aws_iam_policy_document" "es_access_policy" {
     effect = "Allow"
     principals {
       type        = "AWS"
-      identifiers = [lookup(var.COGNITO_MAP, "auth_arn")]
+      identifiers = concat([lookup(var.COGNITO_MAP, "auth_arn")], var.ES_ROLES)
     }
     actions = ["es:*"]
     resources = ["arn:aws:es:${var.AWS_REGION}:${data.aws_caller_identity.current.account_id}:domain/${lower(var.PREFIX)}-${lower(var.ENV)}-elastic-search/*"]
@@ -89,7 +90,7 @@ resource "aws_iam_role_policy_attachment" "cognito_es_attach" {
 
 resource "aws_elasticsearch_domain" "es" {
   domain_name = "${lower(var.PREFIX)}-elasticsearch"
-  elasticsearch_version = "7.7"
+  elasticsearch_version = "7.10"
 
   cluster_config {
     instance_type = var.ES_INSTANCE
@@ -129,7 +130,7 @@ resource "aws_elasticsearch_domain" "es" {
 
   tags = merge(
   var.DEFAULT_TAGS,
-  map("Name", "${lower(var.PREFIX)}-${lower(var.ENV)}-elastic-search")
+  map("Name", lower("${lower(var.PREFIX)}-${lower(var.ENV)}-elastic-search"))
   )
 
   depends_on = [aws_iam_service_linked_role.es, aws_iam_role_policy_attachment.cognito_es_attach]
