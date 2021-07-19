@@ -30,7 +30,8 @@ services:
       - elasticsearch
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:6.2.2
+    build:
+      context: ./config/logstash
     container_name: logstash
     ports:
       - 5044:5044
