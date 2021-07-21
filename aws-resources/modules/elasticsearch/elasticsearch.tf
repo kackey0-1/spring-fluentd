@@ -47,10 +47,19 @@ module "spring" {
   SECURITY_GROUPS = var.SPRING_SECURITY_GROUP
   INSTANCE_TYPE   = var.SPRING_INSTANCE
   INSTANCE_VOLUME = var.SPRING_VOLUME_GB
-//  ES_ENDPOINT     = module.elasticsearch_domain.es_domain.endpoint
   COGNITO_DOMAIN  = lookup(module.cognito.cognito_map, "domain")
   DEFAULT_TAGS    = var.DEFAULT_TAGS
 }
+
+//module "alb" {
+//  source          = "./alb"
+//  ENV             = var.ENV
+//  PREFIX          = var.PREFIX
+//  SUBNET_ID       = var.NGINX_SUBNET_ID
+//  SECURITY_GROUPS = var.SECURITY_GROUPS
+//  ES_ENDPOINT     = module.elasticsearch_domain.es_domain.endpoint
+//  DEFAULT_TAGS    = var.DEFAULT_TAGS
+//}
 
 
 output "nginx_instance" {

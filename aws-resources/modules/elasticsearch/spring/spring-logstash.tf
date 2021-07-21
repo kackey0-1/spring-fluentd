@@ -27,8 +27,20 @@ data "aws_iam_policy" "ssm_ec2_role" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
 }
 
-data "aws_iam_policy" "es_ec2_role" {
-  arn = "arn:aws:iam::aws:policy/service-role/AWSQuickSightElasticsearchPolicy"
+resource "aws_iam_policy" "es_ec2_policy" {
+  name = "EC2-ES-POLICY"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+   {
+      "Effect": "Allow",
+      "Action": ["es:*"],
+      "Resource": "arn:aws:es:ap-northeast-1:585898325337:domain/edu-logging-elasticsearch/*"
+    }
+  ]
+}
+EOF
 }
 
 data "template_file" "userdata" {
@@ -75,7 +87,7 @@ resource "aws_iam_role_policy_attachment" "ssm_ec2_role" {
 
 resource "aws_iam_role_policy_attachment" "es_ec2_role" {
   role       = aws_iam_role.spring_role.name
-  policy_arn = data.aws_iam_policy.es_ec2_role.arn
+  policy_arn = aws_iam_policy.es_ec2_policy.arn
 }
 
 resource "aws_instance" "spring" {
@@ -114,6 +126,6 @@ output "spring_es_role" {
 output "spring_ip" {
   description = "spring ip"
   value       =  {
-    "Private IP" = aws_instance.spring.private_ip
+    "Private IP" = "ssh -i ./keypair/instance-key ec2-user@${aws_instance.spring.private_ip}"
   }
 }
