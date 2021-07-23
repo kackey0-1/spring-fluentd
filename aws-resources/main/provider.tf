@@ -1,10 +1,6 @@
 provider "aws" {
   region = var.AWS_REGION
 
-  assume_role {
-    role_arn = "arn:aws:iam::585898325337:role/CodeberryAdministratorAccess"
-  }
-
   version = "~> 3.5"
 }
 
