@@ -1,20 +1,17 @@
 # spring-logstash
 
-## build
-```shell
-docker-compose build
-```
-## execute
-```shell
-docker-compose up -d 
-```
-
 ## Structure
 - Spring Boot
-- Kafka Connect
-- Kafka
+- Logstash
 - ElasticSearch
 - Kibana
+
+## Implementation
+```shell
+cd aws-resources/main
+terraform init
+terraform apply
+```
 
 ## 
 ```shell
