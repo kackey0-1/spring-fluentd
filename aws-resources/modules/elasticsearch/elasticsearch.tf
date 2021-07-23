@@ -48,6 +48,7 @@ module "spring" {
   INSTANCE_TYPE   = var.SPRING_INSTANCE
   INSTANCE_VOLUME = var.SPRING_VOLUME_GB
   COGNITO_DOMAIN  = lookup(module.cognito.cognito_map, "domain")
+  ES_ENDPOINT     = module.elasticsearch_domain.es_domain.endpoint
   DEFAULT_TAGS    = var.DEFAULT_TAGS
 }
 

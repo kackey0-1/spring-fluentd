@@ -1,0 +1,14 @@
+version: '2'
+services:
+  logstash:
+    build:
+      context: ./config/logstash
+    container_name: logstash
+    ports:
+      - 5044:5044
+    volumes:
+      - ./config/logstash/config/:/usr/share/logstash/config/
+      - ./config/logstash/pipeline/:/usr/share/logstash/pipeline/
+    environment:
+      ELASTICSEARCH_HOST: _ES_DOMAIN:443
+      LOG_INDEX_NAME: logstash-json-logs

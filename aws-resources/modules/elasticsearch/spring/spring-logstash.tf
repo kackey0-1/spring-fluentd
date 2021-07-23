@@ -7,6 +7,7 @@ variable "SUBNET_ID" {}
 variable "SECURITY_GROUPS" {}
 variable "AWS_REGION" {}
 variable "COGNITO_DOMAIN" {}
+variable "ES_ENDPOINT" {}
 variable "DEFAULT_TAGS" {}
 
 
@@ -45,6 +46,9 @@ EOF
 
 data "template_file" "userdata" {
   template = file("../common/configure_spring.sh")
+  vars = map(
+  "ES_ENDPOINT", var.ES_ENDPOINT,
+  )
 }
 
 resource "aws_iam_role" "spring_role" {
