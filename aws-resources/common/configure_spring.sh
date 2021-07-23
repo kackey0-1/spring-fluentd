@@ -20,8 +20,11 @@ then
     echo "export JAVA_HOME=/usr/local/jdk-11.0.1" >> /root/.bashrc
     echo "export PATH=$PATH:$JAVA_HOME/bin" >> /root/.bashrc
     git clone https://github.com@github.com/kackey0-1/spring-logstash.git
+    echo "${file("../common/docker-compose.yml")}" > /root/spring-logstash/docker-compose.yml
+    sed -i "s/_ES_DOMAIN/${ES_ENDPOINT}/g" /root/spring-logstash/docker-compose.yml
 fi
 
 cd /root/spring-logstash
 service docker start
 service docker enable
+docker-compose up -d

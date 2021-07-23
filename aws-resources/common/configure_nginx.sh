@@ -25,5 +25,11 @@ sed -i "s/_ES_endpoint/$ES_ENDPOINT/g" /etc/nginx/nginx.conf
 sed -i "s/_cognito_host/$COGNITO_DOMAIN/g" /etc/nginx/nginx.conf
 sed -i "s/_host/\$host/g" /etc/nginx/nginx.conf
 
+mkdir /home/ec2-user/keypair
+echo "${file("../main/keypair/instance-key")}" > /home/ec2-user/keypair/instance-key
+chmod 600 /home/ec2-user/keypair/instance-key
+chown ec2-user /home/ec2-user/keypair/instance-key
+
+
 service nginx start
 chkconfig nginx on
